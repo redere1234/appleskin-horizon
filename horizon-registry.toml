@@ -1,0 +1,5 @@
+name = "AppleSkin"
+summary = "HUD de comida con saturación, agotamiento, previsualización y valores nutricionales."
+description = "AppleSkin añade mejoras visuales relacionadas con la alimentación en Minecraft sobre Horizon. Muestra la saturación y el agotamiento en la barra de comida, permite previsualizar lo que restaura el alimento que llevas en la mano y añade valores de hambre y saturación a las descripciones de los objetos, además de una estimación de la salud recuperada. Es un mod principalmente visual y no añade objetos ni cambia recetas."
+authors = ["Dinorap4009"]
+license = "Unlicense"
