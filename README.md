@@ -8,7 +8,7 @@ Es un mod principalmente visual: no añade objetos ni cambia recetas.
 
 ## Descarga
 
-- [AppleSkin 3.0.3 para Horizon nightly](./appleskin-3.0.3-nightly-2026-11-19-Dinorap4009.hmod)
+- [AppleSkin 3.0.3 para Horizon nightly](./appleskin-3.0.3.hmod)
 - [Icono del mod](./appleskin-icon.png)
 
 Copia el archivo `.hmod` en la carpeta `horizon-mods/` de la instancia de Horizon.
