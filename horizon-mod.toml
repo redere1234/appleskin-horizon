@@ -1,0 +1,15 @@
+id = "appleskin"
+name = "AppleSkin"
+version = "3.0.3"
+description = "Adds various food-related HUD improvements: saturation and exhaustion on the food bar, a preview of what held food restores, and food values in tooltips."
+authors = ["Dinorap4009"]
+license = "Unlicense"
+api = "0.2"
+side = "both"
+capabilities = ["registries"]
+homepage = "https://modrinth.com/mod/appleskin"
+issues = "https://github.com/squeek502/AppleSkin/issues"
+
+[wasm]
+sha512 = "b28d2b48bc602fb199f51393e35d20fffdbe970e838abdb3cc8f828c41359d82a258387c4d242342d46945280ca515c8f1fa2eba7fa274855b7d38d8806a2c08"
+toolchain = "1.99.1 58cf8f9c35b355199727627d07ae34a4e2846d67"
