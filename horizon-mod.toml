@@ -3,7 +3,6 @@ name = "AppleSkin"
 version = "3.0.3"
 description = "Adds various food-related HUD improvements: saturation and exhaustion on the food bar, a preview of what held food restores, and food values in tooltips."
 authors = ["Dinorap4009"]
-license = "Unlicense"
 api = "0.2"
 side = "both"
 capabilities = ["registries"]
