@@ -13,10 +13,10 @@ use std::collections::HashMap;
 use std::sync::{Mutex, OnceLock};
 
 use mod_api::{
-    ClientHost, GuiDraw, GuiLayerPostEvent, GuiLayerPreEvent, Hand, HealthHudEvent, HealthInputs,
+    ClientHost, GuiDraw, GuiLayerPreEvent, Hand, HealthHudEvent, HealthInputs,
     HostSide, Hooks, ItemKey, ItemPart, PayloadCodec, PayloadId, PlayerTickPostEvent,
-    RegistrationContext, Registrar, SettingSpec, Tag, ToClient, TooltipComponentDrawEvent,
-    TooltipComponentEvent, item::item_stack::ItemStack,
+    RegistrationContext, Registrar, RenderGuiPostEvent, SettingSpec, Tag, ToClient,
+    TooltipComponentDrawEvent, TooltipComponentEvent, item::item_stack::ItemStack,
 };
 
 pub const ID: &str = "appleskin";
@@ -506,10 +506,7 @@ impl Hooks for AppleSkin {
         mod_api::Flow::Continue
     }
 
-    fn gui_layer_post(&self, host: &dyn ClientHost, event: &mut GuiLayerPostEvent<'_>) {
-        if event.layer != "minecraft:player_health" {
-            return;
-        }
+    fn render_gui_post(&self, host: &dyn ClientHost, event: &mut RenderGuiPostEvent<'_>) {
         let Some(bars) = *lock(&self.bars) else {
             return;
         };
