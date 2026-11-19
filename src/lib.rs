@@ -381,13 +381,17 @@ fn lock<T>(m: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
 #[derive(Default)]
 struct AppleSkin {
     bars: Mutex<Option<Bars>>,
+    /// FIX: la capa de vida/comida ya paso este frame y falta dibujar la saturacion encima.
+    pending: Mutex<bool>,
     /// What each server player was last sent.
     sent: Mutex<HashMap<u128, FoodSync>>,
 }
 
 impl AppleSkin {
     fn on(host: &dyn ClientHost, key: &str) -> bool {
-        host.setting_bool(key).unwrap_or(true)
+        host.setting_bool(key)
+            .or_else(|| host.setting_bool(&format!("{ID}:{key}")))
+            .unwrap_or(true)
     }
 
     /// The food in hand to preview, if the player could eat it now.
@@ -481,7 +485,22 @@ impl Hooks for AppleSkin {
 
     // The exhaustion bar goes behind the food bar.
     fn gui_layer_pre(&self, host: &dyn ClientHost, event: &mut GuiLayerPreEvent<'_>) -> mod_api::Flow {
-        if event.layer != "minecraft:player_health" || !Self::on(host, "exhaustion_underlay") {
+        // FIX: la saturacion se dibujaba en render_gui_post, que en esta Nightly queda debajo de la
+        // barra de comida (o no se pinta). Ahora se dibuja al empezar la capa SIGUIENTE a la de
+        // vida/comida, o sea justo encima de los muslos.
+        if event.layer != "minecraft:player_health" {
+            let mut pending = lock(&self.pending);
+            if *pending {
+                *pending = false;
+                drop(pending);
+                if let Some(bars) = *lock(&self.bars) {
+                    self.draw_overlays(host, &bars, &mut *event.draw);
+                }
+            }
+            return mod_api::Flow::Continue;
+        }
+        *lock(&self.pending) = true;
+        if !Self::on(host, "exhaustion_underlay") {
             return mod_api::Flow::Continue;
         }
         let Some(bars) = *lock(&self.bars) else {
@@ -507,12 +526,27 @@ impl Hooks for AppleSkin {
     }
 
     fn render_gui_post(&self, host: &dyn ClientHost, event: &mut RenderGuiPostEvent<'_>) {
+        // FIX: respaldo si ninguna capa vino despues de la de vida/comida.
+        {
+            let mut pending = lock(&self.pending);
+            if !*pending {
+                return;
+            }
+            *pending = false;
+        }
         let Some(bars) = *lock(&self.bars) else {
             return;
         };
+        self.draw_overlays(host, &bars, &mut *event.draw);
+    }
+}
+
+impl AppleSkin {
+    /// Saturacion, vista previa de la comida en la mano y vida estimada.
+    fn draw_overlays(&self, host: &dyn ClientHost, bars: &Bars, draw: &mut dyn mod_api::DrawContext) {
+        let bars = *bars;
         let place = layout(&bars);
         let (saturation, exhaustion) = Self::saturation_and_exhaustion(host, &bars);
-        let draw = &mut *event.draw;
         let sat_sprite = |frame: usize| {
             if bars.hunger {
                 sprite(&format!("saturation_hunger_{frame}"))
